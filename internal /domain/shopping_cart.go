@@ -1,6 +1,9 @@
 package domain
 
 type ShoppingCart struct {
-	Products      []Product
-	DiscountRules []DiscountRule
+	Items         map[ProductCode]ShoppingCartItem
+	DiscountRules map[ProductCode][]DiscountRule
+}
+
+func NewShoppingCart(discountRules []DiscountRule) {
 }
