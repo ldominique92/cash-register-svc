@@ -1,15 +1,20 @@
 package app
 
-import "cash-register-svc/internal/domain"
+import (
+	"cash-register-svc/internal/domain"
+	"errors"
+	"fmt"
+)
 
 type CashRegisterApp struct {
 	ProductRepository domain.ProductRepository
 	ShoppingCart      domain.ShoppingCart
-	products          []domain.Product
+	ProductCache      domain.ProductCache
 }
 
 func NewCashRegisterApp(
 	productRepository domain.ProductRepository,
+	productCache domain.ProductCache,
 	applyDiscountRules map[string][]string,
 ) (CashRegisterApp, error) {
 	validRules := make(map[domain.ProductCode][]domain.DiscountRuleName)
@@ -29,6 +34,7 @@ func NewCashRegisterApp(
 
 	a := CashRegisterApp{
 		ProductRepository: productRepository,
+		ProductCache:      productCache,
 		ShoppingCart:      cart,
 	}
 
@@ -36,7 +42,26 @@ func NewCashRegisterApp(
 	if err != nil {
 		return CashRegisterApp{}, err
 	}
-	a.products = products
+
+	err = a.ProductCache.Load(products)
+	if err != nil {
+		return CashRegisterApp{}, err
+	}
 
 	return a, nil
+}
+
+func (a CashRegisterApp) AddProductToCart(productCode string, quantity int) error {
+	product, err := a.ProductCache.GetProduct(domain.ProductCode(productCode))
+	if err != nil {
+		return err
+	}
+
+	if len(product.Code) == 0 {
+		return errors.New(fmt.Sprintf("product with code %s not found", productCode))
+	}
+
+	a.ShoppingCart.AddProduct(product, quantity)
+
+	return nil
 }

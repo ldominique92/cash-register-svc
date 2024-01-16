@@ -11,3 +11,8 @@ type Product struct {
 type ProductRepository interface {
 	GetProducts() ([]Product, error)
 }
+
+type ProductCache interface {
+	Load([]Product) error
+	GetProduct(code ProductCode) (Product, error)
+}

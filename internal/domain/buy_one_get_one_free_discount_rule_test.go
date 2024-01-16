@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTotalDiscount(t *testing.T) {
+func TestBuyOneGetOneFreeDiscountRule_TotalDiscount(t *testing.T) {
 	newRule := domain.BuyOneGetOneFreeDiscountRule{}
 	discount := newRule.TotalDiscount(10, 25.5)
 	assert.Equal(t, discount, 127.5)

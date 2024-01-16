@@ -31,3 +31,19 @@ func NewShoppingCart(discountRules map[ProductCode][]DiscountRuleName) (Shopping
 
 	return cart, nil
 }
+
+func (c ShoppingCart) AddProduct(product Product, quantity int) {
+	if quantity == 0 {
+		return
+	}
+
+	if item, ok := c.Items[product.Code]; ok {
+		item.Quantity += quantity
+		c.Items[product.Code] = item
+	} else {
+		c.Items[product.Code] = ShoppingCartItem{
+			Product:  product,
+			Quantity: quantity,
+		}
+	}
+}
