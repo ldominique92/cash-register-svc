@@ -8,6 +8,7 @@ import (
 )
 
 // TODO: should be a parameter so we can have a different file for testing
+// TODO: testing
 const ProductsSourceFile = "products.json"
 
 type ProductFileRepository struct{}
