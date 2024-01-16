@@ -3,15 +3,20 @@ package app
 import "cash-register-svc/internal/domain"
 
 type CashRegisterApp struct {
-	ShoppingCart domain.ShoppingCart
+	ProductRepository domain.ProductRepository
+	ShoppingCart      domain.ShoppingCart
+	products          []domain.Product
 }
 
-func NewCashRegisterApp(applyDiscountRules map[string][]string) (CashRegisterApp, error) {
+func NewCashRegisterApp(
+	productRepository domain.ProductRepository,
+	applyDiscountRules map[string][]string,
+) (CashRegisterApp, error) {
 	validRules := make(map[domain.ProductCode][]domain.DiscountRuleName)
 
 	for productCode, ruleNames := range applyDiscountRules {
 		for _, ruleName := range ruleNames {
-			// TODO: check if product IDs exist
+			//TODO: check if product IDs exist
 			validRules[domain.ProductCode(productCode)] =
 				append(validRules[domain.ProductCode(productCode)], domain.DiscountRuleName(ruleName))
 		}
@@ -22,7 +27,16 @@ func NewCashRegisterApp(applyDiscountRules map[string][]string) (CashRegisterApp
 		return CashRegisterApp{}, err
 	}
 
-	return CashRegisterApp{
-		ShoppingCart: cart,
-	}, nil
+	a := CashRegisterApp{
+		ProductRepository: productRepository,
+		ShoppingCart:      cart,
+	}
+
+	products, err := a.ProductRepository.GetProducts()
+	if err != nil {
+		return CashRegisterApp{}, err
+	}
+	a.products = products
+
+	return a, nil
 }

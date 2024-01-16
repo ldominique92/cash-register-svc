@@ -7,3 +7,7 @@ type Product struct {
 	Name  string
 	Price float64
 }
+
+type ProductRepository interface {
+	GetProducts() ([]Product, error)
+}
