@@ -8,20 +8,17 @@ import (
 )
 
 func TestShoppingCart_NewShoppingCart(t *testing.T) {
-	// With invalid rules
-	testRules := map[domain.ProductCode][]domain.DiscountRuleName{
-		"PRD1": {"TEST_RULE"},
-	}
-
+	// Case 1: When rules are invalid
+	testRules := map[domain.ProductCode]domain.DiscountRuleName{"PRD1": "TEST_RULE"}
 	cart, err := domain.NewShoppingCart(testRules)
 	assert.NotNil(t, err)
 	assert.Nil(t, cart.Items)
 	assert.Nil(t, cart.DiscountRules)
 
-	// With valid rules
-	testRules = map[domain.ProductCode][]domain.DiscountRuleName{
-		"PRD1": {"BUY_ONE_GET_ONE_FREE"},
-		"PRD2": {"BUY_ONE_GET_ONE_FREE"}, // TODO: add new rules when implemented
+	// Case 2: When rules valid
+	testRules = map[domain.ProductCode]domain.DiscountRuleName{
+		"PRD1": "BUY_ONE_GET_ONE_FREE",
+		"PRD2": "BUY_ONE_GET_ONE_FREE", // TODO: add new rules when implemented
 	}
 
 	cart, err = domain.NewShoppingCart(testRules)
@@ -30,12 +27,12 @@ func TestShoppingCart_NewShoppingCart(t *testing.T) {
 	assert.Empty(t, cart.Items)
 	assert.NotNil(t, cart.DiscountRules)
 	assert.Len(t, cart.DiscountRules, 2)
-	assert.Equal(t, cart.DiscountRules["PRD1"][0].Name(), "BUY_ONE_GET_ONE_FREE")
-	assert.Equal(t, cart.DiscountRules["PRD2"][0].Name(), "BUY_ONE_GET_ONE_FREE")
+	assert.Equal(t, cart.DiscountRules["PRD1"].Name(), "BUY_ONE_GET_ONE_FREE")
+	assert.Equal(t, cart.DiscountRules["PRD2"].Name(), "BUY_ONE_GET_ONE_FREE")
 }
 
 func TestShoppingCart_AddProduct(t *testing.T) {
-	testRules := map[domain.ProductCode][]domain.DiscountRuleName{"PRD1": {"BUY_ONE_GET_ONE_FREE"}}
+	testRules := map[domain.ProductCode]domain.DiscountRuleName{"PRD1": "BUY_ONE_GET_ONE_FREE"}
 	cart, err := domain.NewShoppingCart(testRules)
 	assert.Nil(t, err)
 
@@ -57,27 +54,27 @@ func TestShoppingCart_AddProduct(t *testing.T) {
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 1)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, 2)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(2))
 
 	cart.AddProduct(product1, 1)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 1)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
 
 	cart.AddProduct(product2, 5)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 2)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
 	assert.Equal(t, cart.Items["PRD2"].Product, product2)
-	assert.Equal(t, cart.Items["PRD2"].Quantity, 5)
+	assert.Equal(t, cart.Items["PRD2"].Quantity, int64(5))
 
 	cart.AddProduct(product2, -2)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 2)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
 	assert.Equal(t, cart.Items["PRD2"].Product, product2)
-	assert.Equal(t, cart.Items["PRD2"].Quantity, 3)
+	assert.Equal(t, cart.Items["PRD2"].Quantity, int64(3))
 }

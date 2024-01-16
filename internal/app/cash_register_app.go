@@ -17,13 +17,12 @@ func NewCashRegisterApp(
 	productCache domain.ProductCache,
 	applyDiscountRules map[string][]string,
 ) (CashRegisterApp, error) {
-	validRules := make(map[domain.ProductCode][]domain.DiscountRuleName)
+	validRules := make(map[domain.ProductCode]domain.DiscountRuleName)
 
 	for productCode, ruleNames := range applyDiscountRules {
 		for _, ruleName := range ruleNames {
 			//TODO: check if product IDs exist
-			validRules[domain.ProductCode(productCode)] =
-				append(validRules[domain.ProductCode(productCode)], domain.DiscountRuleName(ruleName))
+			validRules[domain.ProductCode(productCode)] = domain.DiscountRuleName(ruleName)
 		}
 	}
 
@@ -51,7 +50,7 @@ func NewCashRegisterApp(
 	return a, nil
 }
 
-func (a CashRegisterApp) AddProductToCart(productCode string, quantity int) error {
+func (a CashRegisterApp) AddProductToCart(productCode string, quantity int64) error {
 	product, err := a.ProductCache.GetProduct(domain.ProductCode(productCode))
 	if err != nil {
 		return err
@@ -64,4 +63,8 @@ func (a CashRegisterApp) AddProductToCart(productCode string, quantity int) erro
 	a.ShoppingCart.AddProduct(product, quantity)
 
 	return nil
+}
+
+func (a CashRegisterApp) GetTotal() float64 {
+	return a.ShoppingCart.GetTotal()
 }
