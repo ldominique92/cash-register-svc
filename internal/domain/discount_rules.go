@@ -9,4 +9,6 @@ type DiscountRule interface {
 
 var DiscountRules = map[DiscountRuleName]DiscountRule{
 	BuyOneGetOneFreeDiscountRuleName: BuyOneGetOneFreeDiscountRule{},
+	CashBulkDiscountRuleName:         CashBulkDiscountRule{},
+	PercentageBulkDiscountRuleName:   PercentageBulkDiscountRule{},
 }

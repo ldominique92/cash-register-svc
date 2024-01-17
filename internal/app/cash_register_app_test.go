@@ -24,8 +24,8 @@ func TestCashRegisterApp_NewCashRegisterApp(t *testing.T) {
 
 	// Case 2: valid discount rules, but repository throws error
 	discountRules = map[string][]string{
-		"PRD1": {"BUY_ONE_GET_ONE_FREE"},
-		"PRD2": {"BUY_ONE_GET_ONE_FREE"}, // TODO: change when more rules are implemented
+		"PRD1": {"BUY_ONE_GET_ONE_FREE_DISCOUNT_RULE"},
+		"PRD2": {"CASH_BULK_DISCOUNT_RULE"},
 	}
 
 	repositoryMockCall := productRepositoryMock.On("GetProducts").
@@ -72,7 +72,7 @@ func TestCashRegisterApp_AddProductToCart(t *testing.T) {
 	productCacheMock := new(ProductCacheMock)
 	productRepositoryMock := new(ProductRepositoryMock)
 	productCode := "PRD1"
-	discountRules := map[string][]string{"PRD1": {"BUY_ONE_GET_ONE_FREE"}}
+	discountRules := map[string][]string{"PRD1": {"BUY_ONE_GET_ONE_FREE_DISCOUNT_RULE"}}
 	product := domain.Product{
 		Code:  "PRD1",
 		Name:  "Coffee",

@@ -43,7 +43,6 @@ func (c ShoppingCart) AddProduct(product Product, quantity int64) {
 	}
 }
 
-// TODO: test this
 func (c ShoppingCart) GetTotal() float64 {
 	total := float64(0)
 
@@ -56,4 +55,10 @@ func (c ShoppingCart) GetTotal() float64 {
 	}
 
 	return total
+}
+
+func (c ShoppingCart) Reset() {
+	for k := range c.Items {
+		delete(c.Items, k)
+	}
 }

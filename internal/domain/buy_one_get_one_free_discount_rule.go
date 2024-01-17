@@ -1,6 +1,6 @@
 package domain
 
-const BuyOneGetOneFreeDiscountRuleName = "BUY_ONE_GET_ONE_FREE"
+const BuyOneGetOneFreeDiscountRuleName = "BUY_ONE_GET_ONE_FREE_DISCOUNT_RULE"
 
 type BuyOneGetOneFreeDiscountRule struct{}
 

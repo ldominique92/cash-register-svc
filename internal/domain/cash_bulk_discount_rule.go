@@ -1,7 +1,7 @@
 package domain
 
 const (
-	CashBulkDiscountRuleName = "BULK"
+	CashBulkDiscountRuleName = "CASH_BULK_DISCOUNT_RULE"
 	MinimumCashBulkSize      = 3
 	DiscountPerItem          = 0.50
 )

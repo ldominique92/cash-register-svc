@@ -1,21 +1,22 @@
 package domain
 
 const (
-	PercentageDiscountRuleName = "BULK"
-	MinimumPercentageBulkSize  = 3
-	DiscountPercentage         = float64(1) / float64(3)
+	PercentageBulkDiscountRuleName = "PERCENTAGE_BULK_DISCOUNT_RULE"
+	MinimumPercentageBulkSize      = 3
+	DiscountPercentage             = float64(1) / float64(3)
 )
 
 type PercentageBulkDiscountRule struct {
 }
 
 func (t PercentageBulkDiscountRule) Name() string {
-	return PercentageDiscountRuleName
+	return PercentageBulkDiscountRuleName
 }
 
 func (t PercentageBulkDiscountRule) TotalDiscount(quantity int64, price float64) float64 {
 	if quantity >= MinimumPercentageBulkSize {
-		return DiscountPercentage * price
+		a := DiscountPercentage * price * float64(quantity)
+		return a
 	}
 
 	return 0
