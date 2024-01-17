@@ -15,26 +15,11 @@ type CashRegisterApp struct {
 func NewCashRegisterApp(
 	productRepository domain.ProductRepository,
 	productCache domain.ProductCache,
-	applyDiscountRules map[string][]string,
+	applyDiscountRules map[string]string,
 ) (CashRegisterApp, error) {
-	validRules := make(map[domain.ProductCode]domain.DiscountRuleName)
-
-	for productCode, ruleNames := range applyDiscountRules {
-		for _, ruleName := range ruleNames {
-			//TODO: check if product IDs exist
-			validRules[domain.ProductCode(productCode)] = domain.DiscountRuleName(ruleName)
-		}
-	}
-
-	cart, err := domain.NewShoppingCart(validRules)
-	if err != nil {
-		return CashRegisterApp{}, err
-	}
-
 	a := CashRegisterApp{
 		ProductRepository: productRepository,
 		ProductCache:      productCache,
-		ShoppingCart:      cart,
 	}
 
 	products, err := a.ProductRepository.GetProducts()
@@ -47,22 +32,44 @@ func NewCashRegisterApp(
 		return CashRegisterApp{}, err
 	}
 
+	validRules := make(map[domain.ProductCode]domain.DiscountRuleName)
+	for productCode, ruleName := range applyDiscountRules {
+		_, err := a.getProductFromCache(productCode)
+		if err != nil {
+			return CashRegisterApp{}, err
+		}
+		validRules[domain.ProductCode(productCode)] = domain.DiscountRuleName(ruleName)
+	}
+
+	cart, err := domain.NewShoppingCart(validRules)
+	if err != nil {
+		return CashRegisterApp{}, err
+	}
+	a.ShoppingCart = cart
+
 	return a, nil
 }
 
 func (a CashRegisterApp) AddProductToCart(productCode string, quantity int64) error {
-	product, err := a.ProductCache.GetProduct(domain.ProductCode(productCode))
+	product, err := a.getProductFromCache(productCode)
 	if err != nil {
 		return err
 	}
 
-	if len(product.Code) == 0 {
-		return errors.New(fmt.Sprintf("product with code %s not found", productCode))
+	a.ShoppingCart.AddProduct(product, quantity)
+	return nil
+}
+
+func (a CashRegisterApp) getProductFromCache(productCode string) (domain.Product, error) {
+	product, err := a.ProductCache.GetProduct(domain.ProductCode(productCode))
+	if err != nil {
+		return domain.Product{}, err
 	}
 
-	a.ShoppingCart.AddProduct(product, quantity)
-
-	return nil
+	if len(product.Code) == 0 {
+		return domain.Product{}, errors.New(fmt.Sprintf("product with code %s not found", productCode))
+	}
+	return product, nil
 }
 
 func (a CashRegisterApp) GetTotal() float64 {
