@@ -7,16 +7,20 @@ import (
 	"os"
 )
 
-// TODO: should be a parameter so we can have a different file for testing
-// TODO: testing
-const ProductsSourceFile = "products.json"
+type ProductFileRepository struct {
+	sourceFile string
+}
 
-type ProductFileRepository struct{}
+func NewProductFileRepository(sourceFile string) ProductFileRepository {
+	return ProductFileRepository{
+		sourceFile: sourceFile,
+	}
+}
 
 func (r ProductFileRepository) GetProducts() ([]domain.Product, error) {
 	var products []domain.Product
 
-	jsonFile, err := os.Open(ProductsSourceFile)
+	jsonFile, err := os.Open(r.sourceFile)
 	if err != nil {
 		return nil, err
 	}

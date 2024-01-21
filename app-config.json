@@ -1,0 +1,8 @@
+{
+  "products_source_file": "products.json",
+  "discount_rules": {
+    "GR1": "BUY_ONE_GET_ONE_FREE_DISCOUNT_RULE",
+    "SR1": "CASH_BULK_DISCOUNT_RULE",
+    "CF1": "PERCENTAGE_BULK_DISCOUNT_RULE"
+  }
+}

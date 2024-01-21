@@ -1,5 +1,7 @@
 package domain
 
+import "cash-register-svc/internal/domain/discount_rules"
+
 type DiscountRuleName string
 
 type DiscountRule interface {
@@ -8,7 +10,7 @@ type DiscountRule interface {
 }
 
 var DiscountRules = map[DiscountRuleName]DiscountRule{
-	BuyOneGetOneFreeDiscountRuleName: BuyOneGetOneFreeDiscountRule{},
-	CashBulkDiscountRuleName:         CashBulkDiscountRule{},
-	PercentageBulkDiscountRuleName:   PercentageBulkDiscountRule{},
+	discount_rules.BuyOneGetOneFreeDiscountRuleName: discount_rules.BuyOneGetOneFreeDiscountRule{},
+	discount_rules.CashBulkDiscountRuleName:         discount_rules.CashBulkDiscountRule{},
+	discount_rules.PercentageBulkDiscountRuleName:   discount_rules.PercentageBulkDiscountRule{},
 }

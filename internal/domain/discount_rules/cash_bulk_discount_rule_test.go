@@ -1,14 +1,14 @@
-package domain_test
+package discount_rules_test
 
 import (
-	"cash-register-svc/internal/domain"
+	"cash-register-svc/internal/domain/discount_rules"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPercentageBulkDiscountRule_TotalDiscount(t *testing.T) {
-	newRule := domain.PercentageBulkDiscountRule{}
+	newRule := discount_rules.PercentageBulkDiscountRule{}
 	discount := newRule.TotalDiscount(2, 6.00)
 	assert.Equal(t, discount, float64(0))
 

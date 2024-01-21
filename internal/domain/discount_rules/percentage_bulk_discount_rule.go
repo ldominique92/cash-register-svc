@@ -1,4 +1,4 @@
-package domain
+package discount_rules
 
 const (
 	PercentageBulkDiscountRuleName = "PERCENTAGE_BULK_DISCOUNT_RULE"

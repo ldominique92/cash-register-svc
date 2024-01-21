@@ -1,4 +1,4 @@
-package domain
+package discount_rules
 
 const BuyOneGetOneFreeDiscountRuleName = "BUY_ONE_GET_ONE_FREE_DISCOUNT_RULE"
 
