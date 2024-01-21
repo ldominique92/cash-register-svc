@@ -36,5 +36,9 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
+	if rootCmd == nil {
+		return
+	}
+
 	rootCmd.AddCommand(listCmd)
 }

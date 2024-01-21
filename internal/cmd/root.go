@@ -9,8 +9,8 @@ import (
 )
 
 type CashRegisterRootCommand struct {
-	cmd             cobra.Command
-	cashRegisterApp app.CashRegisterApp
+	cmd cobra.Command
+	app app.CashRegisterApp
 }
 
 func (c *CashRegisterRootCommand) Execute() error {
@@ -33,6 +33,7 @@ func Execute(cashRegisterApp app.CashRegisterApp) {
 			Short: "###  Cash Register Amenitiz ###",
 			Long:  `###  Cash Register Amenitiz ###`,
 		},
+		app: cashRegisterApp,
 	}
 
 	err := rootCmd.Execute()
