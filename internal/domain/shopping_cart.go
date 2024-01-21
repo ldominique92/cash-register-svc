@@ -27,7 +27,7 @@ func NewShoppingCart(discountRules map[ProductCode]DiscountRuleName) (ShoppingCa
 	return cart, nil
 }
 
-func (c ShoppingCart) AddProduct(product Product, quantity int64) {
+func (c ShoppingCart) AddProduct(product Product, quantity int) {
 	if quantity == 0 {
 		return
 	}

@@ -51,7 +51,7 @@ func NewCashRegisterApp(
 	return a, nil
 }
 
-func (a CashRegisterApp) AddProductToCart(productCode string, quantity int64) error {
+func (a CashRegisterApp) AddProductToCart(productCode string, quantity int) error {
 	product, err := a.getProductFromCache(productCode)
 	if err != nil {
 		return err

@@ -13,7 +13,7 @@ func (t PercentageBulkDiscountRule) Name() string {
 	return PercentageBulkDiscountRuleName
 }
 
-func (t PercentageBulkDiscountRule) TotalDiscount(quantity int64, price float64) float64 {
+func (t PercentageBulkDiscountRule) TotalDiscount(quantity int, price float64) float64 {
 	if quantity >= MinimumPercentageBulkSize {
 		a := DiscountPercentage * price * float64(quantity)
 		return a

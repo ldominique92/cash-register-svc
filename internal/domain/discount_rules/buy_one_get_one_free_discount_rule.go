@@ -8,7 +8,7 @@ func (t BuyOneGetOneFreeDiscountRule) Name() string {
 	return BuyOneGetOneFreeDiscountRuleName
 }
 
-func (t BuyOneGetOneFreeDiscountRule) TotalDiscount(quantity int64, price float64) float64 {
+func (t BuyOneGetOneFreeDiscountRule) TotalDiscount(quantity int, price float64) float64 {
 	pairs := quantity / 2
 	return float64(pairs) * price
 }

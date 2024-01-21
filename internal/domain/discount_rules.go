@@ -5,7 +5,7 @@ import "cash-register-svc/internal/domain/discount_rules"
 type DiscountRuleName string
 
 type DiscountRule interface {
-	TotalDiscount(quantity int64, price float64) float64
+	TotalDiscount(quantity int, price float64) float64
 	Name() string
 }
 
