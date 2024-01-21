@@ -15,8 +15,8 @@ import (
 )
 
 type AppConfig struct {
-	ProductsSourceFile string // `mapstructure:"products_source_file"`
-	DiscountRules      map[string]string
+	ProductsSourceFile string            `mapstructure:"products_source_file"`
+	DiscountRules      map[string]string `mapstructure:"discount_rules"`
 }
 
 func main() {
@@ -36,6 +36,7 @@ func main() {
 func loadAppConfig() (AppConfig, error) {
 	var appConfig AppConfig
 
+	viper.AddConfigPath(".")
 	viper.SetConfigName("app-config") // Register config file name (no extension)
 	viper.SetConfigType("json")       // Look for specific type
 	err := viper.ReadInConfig()

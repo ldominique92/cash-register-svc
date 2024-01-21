@@ -22,19 +22,18 @@ func (c *CashRegisterRootCommand) AddCommand(cmd *cobra.Command) {
 }
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd *CashRegisterRootCommand
+var rootCmd = &CashRegisterRootCommand{
+	cmd: cobra.Command{
+		Use:   "cash-register-svc",
+		Short: "###  Cash Register Amenitiz ###",
+		Long:  `###  Cash Register Amenitiz ###`,
+	},
+}
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute(cashRegisterApp app.CashRegisterApp) {
-	rootCmd = &CashRegisterRootCommand{
-		cmd: cobra.Command{
-			Use:   "cash-register-svc",
-			Short: "###  Cash Register Amenitiz ###",
-			Long:  `###  Cash Register Amenitiz ###`,
-		},
-		app: cashRegisterApp,
-	}
+	rootCmd.app = cashRegisterApp
 
 	err := rootCmd.Execute()
 	if err != nil {
