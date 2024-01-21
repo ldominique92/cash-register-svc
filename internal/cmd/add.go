@@ -14,24 +14,34 @@ var addCmd = &cobra.Command{
 -p PRODUCT_NAME 
 -q QUANTITY`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add called")
+		productCode, _ := cmd.Flags().GetString("p")
+		quantity, _ := cmd.Flags().GetInt("q")
+
+		if len(productCode) == 0 {
+			fmt.Println("product code is mandatory")
+			return
+		}
+
+		if quantity <= 0 {
+			fmt.Println("product quantity should be bigger than 0")
+			return
+		}
+
+		err := rootCmd.app.AddProductToCart(productCode, quantity)
+		if err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 
 func init() {
 	if rootCmd == nil {
+		fmt.Println("not implemented")
 		return
 	}
 
 	rootCmd.AddCommand(addCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// addCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	addCmd.Flags().String("p", "", "Product code")
+	addCmd.Flags().Int("q", 0, "Product quantity")
 }
