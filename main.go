@@ -4,8 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package main
 
 import (
-	"cash-register-svc/cmd"
 	"cash-register-svc/internal/app"
+	"cash-register-svc/internal/cmd"
 	"cash-register-svc/internal/infrastructure"
 	"errors"
 	"fmt"
@@ -30,7 +30,7 @@ func main() {
 		log.Fatal(fmt.Errorf("app could not be initialized: %w", err))
 	}
 
-	cmd.Execute()
+	cmd.Execute(cashRegisterApp)
 }
 
 func loadAppConfig() (AppConfig, error) {
