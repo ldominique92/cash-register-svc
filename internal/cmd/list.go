@@ -26,7 +26,7 @@ var listCmd = &cobra.Command{
 		case "products":
 			listProducts()
 		case "cart":
-			fmt.Println("cart")
+			listCart()
 		case "discounts":
 			fmt.Println("discounts")
 		default:
@@ -53,6 +53,20 @@ func listProducts() {
 
 	for _, p := range products {
 		fmt.Printf("| %-4s | %-20s | %5.2f€ |\n", p.Code, p.Name, p.Price)
+	}
+
+}
+
+func listCart() {
+	if rootCmd == nil {
+		fmt.Println("not implemented")
+	}
+
+	fmt.Println("|                     Cart                       |")
+	fmt.Println("| Code | Name                | Quantity | Price  |")
+
+	for _, i := range rootCmd.app.ShoppingCart.Items {
+		fmt.Printf("| %-4s | %-20s | %2d€ | %5.2f€ |\n", i.Product.Code, i.Product.Name, i.Quantity, i.Product.Price)
 	}
 
 }
