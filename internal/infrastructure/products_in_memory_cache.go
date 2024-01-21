@@ -1,6 +1,10 @@
 package infrastructure
 
-import "cash-register-svc/internal/domain"
+import (
+	"cash-register-svc/internal/domain"
+
+	"golang.org/x/exp/maps"
+)
 
 type ProductsInMemoryCache struct {
 	products map[domain.ProductCode]domain.Product
@@ -26,4 +30,8 @@ func (c *ProductsInMemoryCache) GetProduct(code domain.ProductCode) (domain.Prod
 	}
 
 	return domain.Product{}, nil
+}
+
+func (c *ProductsInMemoryCache) ListProducts() []domain.Product {
+	return maps.Values(c.products)
 }

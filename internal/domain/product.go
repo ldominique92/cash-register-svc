@@ -15,4 +15,5 @@ type ProductRepository interface {
 type ProductCache interface {
 	Load([]Product) error
 	GetProduct(code ProductCode) (Product, error)
+	ListProducts() []Product
 }

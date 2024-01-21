@@ -76,3 +76,7 @@ func (a CashRegisterApp) getProductFromCache(productCode string) (domain.Product
 func (a CashRegisterApp) GetTotal() float64 {
 	return a.ShoppingCart.GetTotal()
 }
+
+func (a CashRegisterApp) GetProducts() []domain.Product {
+	return a.ProductCache.ListProducts()
+}
