@@ -9,26 +9,32 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List all available products (-p), discounts (-d) or the content of your cart (-c)",
-	Long: `Use the flags to determine what you want to list:
--p: products
--d: discounts
--c: cart content`,
+	Short: "List all available products, discounts or the content of your cart",
+	Long: `Use one of the following parameters to determine what you want to list:
+- products
+- discounts
+- cart`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		message := "list requires a parameter: products, discounts or cart"
+		if len(args) < 1 {
+			fmt.Println(message)
+			return
+		}
+
+		p := args[0]
+		switch p {
+		case "products":
+			fmt.Println("products")
+		case "cart":
+			fmt.Println("cart")
+		case "discounts":
+			fmt.Println("discounts")
+		default:
+			fmt.Println(message)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
