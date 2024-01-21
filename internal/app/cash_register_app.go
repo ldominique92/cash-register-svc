@@ -4,6 +4,7 @@ import (
 	"cash-register-svc/internal/domain"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type CashRegisterApp struct {
@@ -34,7 +35,7 @@ func NewCashRegisterApp(
 
 	validRules := make(map[domain.ProductCode]domain.DiscountRuleName)
 	for productCode, ruleName := range applyDiscountRules {
-		_, err := a.getProductFromCache(productCode)
+		_, err := a.getProductFromCache(strings.ToUpper(productCode))
 		if err != nil {
 			return CashRegisterApp{}, err
 		}
