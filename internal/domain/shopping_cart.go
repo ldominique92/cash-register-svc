@@ -27,20 +27,23 @@ func NewShoppingCart(discountRules map[ProductCode]DiscountRuleName) (ShoppingCa
 	return cart, nil
 }
 
-func (c ShoppingCart) AddProduct(product Product, quantity int) {
-	if quantity == 0 {
-		return
-	}
-
-	if item, ok := c.Items[product.Code]; ok {
-		item.Quantity += quantity
-		c.Items[product.Code] = item
-	} else {
-		c.Items[product.Code] = ShoppingCartItem{
-			Product:  product,
-			Quantity: quantity,
+func (c ShoppingCart) AddProduct(product Product, quantity int) error {
+	if quantity != 0 {
+		if item, ok := c.Items[product.Code]; ok {
+			if quantity < 0 && item.Quantity < (-1*quantity) {
+				return errors.New("invalid quantity")
+			}
+			item.Quantity += quantity
+			c.Items[product.Code] = item
+		} else {
+			c.Items[product.Code] = ShoppingCartItem{
+				Product:  product,
+				Quantity: quantity,
+			}
 		}
 	}
+
+	return nil
 }
 
 func (c ShoppingCart) GetTotal() float64 {
