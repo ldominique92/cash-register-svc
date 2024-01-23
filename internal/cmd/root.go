@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"cash-register-svc/internal/app"
+	"cash-register-svc/internal/domain"
 	"cash-register-svc/internal/infrastructure"
 	"errors"
 	"fmt"
@@ -12,8 +13,8 @@ import (
 )
 
 type AppConfig struct {
-	ProductsSourceFile string            `mapstructure:"products_source_file"`
-	DiscountRules      map[string]string `mapstructure:"discount_rules"`
+	ProductsSourceFile string                                     `mapstructure:"products_source_file"`
+	DiscountRules      map[domain.ProductCode]domain.DiscountRule `mapstructure:"discount_rules"`
 }
 
 var RootCmd = &cobra.Command{

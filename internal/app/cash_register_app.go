@@ -4,7 +4,6 @@ import (
 	"cash-register-svc/internal/domain"
 	"errors"
 	"fmt"
-	"strings"
 )
 
 type CashRegisterApp struct {
@@ -16,7 +15,7 @@ type CashRegisterApp struct {
 func NewCashRegisterApp(
 	productRepository domain.ProductRepository,
 	productCache domain.ProductCache,
-	applyDiscountRules map[string]string,
+	applyDiscountRules map[domain.ProductCode]domain.DiscountRule,
 ) (CashRegisterApp, error) {
 	a := CashRegisterApp{
 		ProductRepository: productRepository,
@@ -33,16 +32,7 @@ func NewCashRegisterApp(
 		return CashRegisterApp{}, err
 	}
 
-	validRules := make(map[domain.ProductCode]domain.DiscountRuleName)
-	for productCode, ruleName := range applyDiscountRules {
-		_, err := a.getProductFromCache(strings.ToUpper(productCode))
-		if err != nil {
-			return CashRegisterApp{}, err
-		}
-		validRules[domain.ProductCode(productCode)] = domain.DiscountRuleName(ruleName)
-	}
-
-	cart, err := domain.NewShoppingCart(validRules)
+	cart, err := domain.NewShoppingCart(applyDiscountRules)
 	if err != nil {
 		return CashRegisterApp{}, err
 	}
@@ -57,8 +47,7 @@ func (a CashRegisterApp) AddProductToCart(productCode string, quantity int) erro
 		return err
 	}
 
-	a.ShoppingCart.AddProduct(product, quantity)
-	return nil
+	return a.ShoppingCart.AddProduct(product, quantity)
 }
 
 func (a CashRegisterApp) getProductFromCache(productCode string) (domain.Product, error) {
@@ -73,7 +62,7 @@ func (a CashRegisterApp) getProductFromCache(productCode string) (domain.Product
 	return product, nil
 }
 
-func (a CashRegisterApp) GetTotal() float64 {
+func (a CashRegisterApp) GetTotal() (float64, error) {
 	return a.ShoppingCart.GetTotal()
 }
 

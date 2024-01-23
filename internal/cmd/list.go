@@ -28,7 +28,7 @@ var listCmd = &cobra.Command{
 		case "cart":
 			listCart()
 		case "discounts":
-			fmt.Println("discounts")
+			listDiscounts()
 		default:
 			fmt.Println(message)
 		}
@@ -67,6 +67,20 @@ func listCart() {
 
 	for _, i := range cashRegisterApp.ShoppingCart.Items { // TODO: create getter
 		fmt.Printf("| %-4s | %-20s | %2d | %5.2f€ |\n", i.Product.Code, i.Product.Name, i.Quantity, i.Product.Price)
+	}
+
+}
+
+func listDiscounts() {
+	if cashRegisterApp == nil {
+		fmt.Println("not implemented")
+	}
+
+	fmt.Println("|                     Discount                       |")
+	fmt.Println("| Product | Description                              |")
+
+	for p, r := range cashRegisterApp.ShoppingCart.DiscountRules {
+		fmt.Printf("| %-4s | %-40s |\n", p, r.Description())
 	}
 
 }

@@ -2,7 +2,6 @@ package domain
 
 import (
 	"errors"
-	"fmt"
 )
 
 type ShoppingCart struct {
@@ -10,18 +9,10 @@ type ShoppingCart struct {
 	DiscountRules map[ProductCode]DiscountRule
 }
 
-func NewShoppingCart(discountRules map[ProductCode]DiscountRuleName) (ShoppingCart, error) {
+func NewShoppingCart(discountRules map[ProductCode]DiscountRule) (ShoppingCart, error) {
 	cart := ShoppingCart{
 		Items:         make(map[ProductCode]ShoppingCartItem),
-		DiscountRules: make(map[ProductCode]DiscountRule),
-	}
-
-	for productCode, ruleName := range discountRules {
-		if rule, ok := DiscountRules[ruleName]; ok {
-			cart.DiscountRules[productCode] = rule
-		} else {
-			return ShoppingCart{}, errors.New(fmt.Sprintf("Discount rule %s not implemented", ruleName))
-		}
+		DiscountRules: discountRules,
 	}
 
 	return cart, nil
@@ -46,18 +37,22 @@ func (c ShoppingCart) AddProduct(product Product, quantity int) error {
 	return nil
 }
 
-func (c ShoppingCart) GetTotal() float64 {
+func (c ShoppingCart) GetTotal() (float64, error) {
 	total := float64(0)
 
 	for productCode, item := range c.Items {
 		if rule, ok := c.DiscountRules[productCode]; ok {
-			total += (float64(item.Quantity) * item.Product.Price) - rule.TotalDiscount(item.Quantity, item.Product.Price)
+			discount, err := rule.TotalDiscount(item.Quantity, item.Product.Price)
+			if err != nil {
+				return 0, err
+			}
+			total += (float64(item.Quantity) * item.Product.Price) - discount
 		} else {
 			total += float64(item.Quantity) * item.Product.Price
 		}
 	}
 
-	return total
+	return total, nil
 }
 
 func (c ShoppingCart) Reset() {
