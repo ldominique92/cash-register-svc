@@ -17,11 +17,11 @@ var resetCmd = &cobra.Command{
 }
 
 func init() {
-	if rootCmd == nil {
+	if RootCmd == nil {
 		return
 	}
 
-	rootCmd.AddCommand(resetCmd)
+	RootCmd.AddCommand(resetCmd)
 
 	// Here you will define your flags and configuration settings.
 

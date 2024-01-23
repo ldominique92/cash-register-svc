@@ -17,11 +17,11 @@ var totalCmd = &cobra.Command{
 }
 
 func init() {
-	if rootCmd == nil {
+	if RootCmd == nil {
 		return
 	}
 
-	rootCmd.AddCommand(totalCmd)
+	RootCmd.AddCommand(totalCmd)
 
 	// Here you will define your flags and configuration settings.
 

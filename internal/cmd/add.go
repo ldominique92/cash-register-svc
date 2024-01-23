@@ -14,6 +14,11 @@ var addCmd = &cobra.Command{
 -p PRODUCT_NAME 
 -q QUANTITY`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if cashRegisterApp == nil {
+			fmt.Println("not implemented")
+			return
+		}
+
 		productCode, _ := cmd.Flags().GetString("p")
 		quantity, _ := cmd.Flags().GetInt("q")
 
@@ -27,7 +32,7 @@ var addCmd = &cobra.Command{
 			return
 		}
 
-		err := rootCmd.app.AddProductToCart(productCode, quantity)
+		err := cashRegisterApp.AddProductToCart(productCode, quantity)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -35,12 +40,12 @@ var addCmd = &cobra.Command{
 }
 
 func init() {
-	if rootCmd == nil {
+	if RootCmd == nil {
 		fmt.Println("not implemented")
 		return
 	}
 
-	rootCmd.AddCommand(addCmd)
+	RootCmd.AddCommand(addCmd)
 
 	addCmd.Flags().String("p", "", "Product code")
 	addCmd.Flags().Int("q", 0, "Product quantity")
