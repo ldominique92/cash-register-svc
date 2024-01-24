@@ -5,17 +5,13 @@ import (
 )
 
 type ShoppingCart struct {
-	Items         map[ProductCode]ShoppingCartItem
-	DiscountRules map[ProductCode]DiscountRule
+	Items map[ProductCode]ShoppingCartItem
 }
 
-func NewShoppingCart(discountRules map[ProductCode]DiscountRule) (ShoppingCart, error) {
-	cart := ShoppingCart{
-		Items:         make(map[ProductCode]ShoppingCartItem),
-		DiscountRules: discountRules,
+func NewShoppingCart() ShoppingCart {
+	return ShoppingCart{
+		Items: make(map[ProductCode]ShoppingCartItem),
 	}
-
-	return cart, nil
 }
 
 func (c ShoppingCart) AddProduct(product Product, quantity int) error {
@@ -27,14 +23,10 @@ func (c ShoppingCart) AddProduct(product Product, quantity int) error {
 			item.Quantity += quantity
 			c.Items[product.Code] = item
 		} else {
-			item := ShoppingCartItem{
+			c.Items[product.Code] = ShoppingCartItem{
 				Product:  product,
 				Quantity: quantity,
 			}
-			if rule, ok := c.DiscountRules[product.Code]; ok {
-				item.DiscountRule = &rule
-			}
-			c.Items[product.Code] = item
 		}
 	}
 

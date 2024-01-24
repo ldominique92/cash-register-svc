@@ -9,13 +9,12 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List all available products, discounts or the content of your cart",
+	Short: "List all available products or the content of your cart",
 	Long: `Use one of the following parameters to determine what you want to list:
 - products
-- discounts
 - cart`,
 	Run: func(cmd *cobra.Command, args []string) {
-		message := "list requires a parameter: products, discounts or cart"
+		message := "list requires a parameter: products or cart"
 		if len(args) < 1 {
 			fmt.Println(message)
 			return
@@ -27,8 +26,6 @@ var listCmd = &cobra.Command{
 			listProducts()
 		case "cart":
 			listCart()
-		case "discounts":
-			listDiscounts()
 		default:
 			fmt.Println(message)
 		}
@@ -48,11 +45,11 @@ func listProducts() {
 	}
 
 	products := cashRegisterApp.GetProducts()
-	fmt.Println("|             Products                 |")
-	fmt.Println("| Code | Name                 | Price  |")
+	fmt.Println("| Products                                                                                                        |")
+	fmt.Println("| Code | Name                 | Price  | Discount                                                                 |")
 
 	for _, p := range products {
-		fmt.Printf("| %-4s | %-20s | %5.2f€ |\n", p.Code, p.Name, p.Price)
+		fmt.Printf("| %-4s | %-20s | %5.2f€ | %-72s |\n", p.Code, p.Name, p.Price, p.DiscountRule.Description())
 	}
 
 }
@@ -69,17 +66,4 @@ func listCart() {
 		fmt.Printf("| %-4s | %-20s | %-8d | %5.2f€ |\n", i.Product.Code, i.Product.Name, i.Quantity, i.Product.Price)
 	}
 
-}
-
-func listDiscounts() {
-	if cashRegisterApp == nil {
-		fmt.Println("not implemented")
-	}
-
-	fmt.Println("|                     Discount                       |")
-	fmt.Println("| Product | Description                              |")
-
-	for p, r := range cashRegisterApp.ShoppingCart.DiscountRules {
-		fmt.Printf("| %-4s | %-40s |\n", p, r.Description())
-	}
 }

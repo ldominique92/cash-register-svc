@@ -8,27 +8,13 @@ import (
 )
 
 func TestShoppingCart_NewShoppingCart(t *testing.T) {
-	rule := domain.DiscountRule{}
-	testRules := map[domain.ProductCode]domain.DiscountRule{
-		"PRD1": rule,
-		"PRD2": rule,
-	}
-
-	cart, err := domain.NewShoppingCart(testRules)
-	assert.Nil(t, err)
+	cart := domain.NewShoppingCart()
 	assert.NotNil(t, cart.Items)
 	assert.Empty(t, cart.Items)
-	assert.NotNil(t, cart.DiscountRules)
-	assert.Len(t, cart.DiscountRules, 2)
-	assert.Equal(t, cart.DiscountRules["PRD1"], rule)
-	assert.Equal(t, cart.DiscountRules["PRD2"], rule)
 }
 
 func TestShoppingCart_AddProduct(t *testing.T) {
-	rule := domain.DiscountRule{}
-	testRules := map[domain.ProductCode]domain.DiscountRule{"PRD1": rule}
-	cart, err := domain.NewShoppingCart(testRules)
-	assert.Nil(t, err)
+	cart := domain.NewShoppingCart()
 
 	product1 := domain.Product{
 		Code:  "PRD1",
@@ -44,74 +30,73 @@ func TestShoppingCart_AddProduct(t *testing.T) {
 
 	assert.Empty(t, cart.Items)
 
-	err = cart.AddProduct(product1, 2)
+	err := cart.AddProduct(product1, 2)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 1)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(2))
+	assert.Equal(t, cart.Items["PRD1"].Quantity, 2)
 
 	err = cart.AddProduct(product1, 1)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 1)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
+	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
 
 	err = cart.AddProduct(product2, 5)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 2)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
+	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
 	assert.Equal(t, cart.Items["PRD2"].Product, product2)
-	assert.Equal(t, cart.Items["PRD2"].Quantity, int64(5))
+	assert.Equal(t, cart.Items["PRD2"].Quantity, 5)
 
 	err = cart.AddProduct(product2, -2)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 2)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
+	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
 	assert.Equal(t, cart.Items["PRD2"].Product, product2)
-	assert.Equal(t, cart.Items["PRD2"].Quantity, int64(3))
+	assert.Equal(t, cart.Items["PRD2"].Quantity, 3)
 	// TODO: quantity can't be negative
 }
 
-func TestShoppingCart_GetTotal(t *testing.T) {
-	discountRules := map[domain.ProductCode]domain.DiscountRule{
-		"GR1": {
-			MinimumQuantity:      2,
-			IsAppliedToBatches:   true,
-			BatchSize:            2,
-			IsPercentageDiscount: true,
-			DiscountPercentage:   1,
-			DiscountInEuro:       0,
-		},
-		"SR1": {
-			MinimumQuantity:      3,
-			IsAppliedToBatches:   false,
-			BatchSize:            0,
-			IsPercentageDiscount: false,
-			DiscountPercentage:   0,
-			DiscountInEuro:       0.50,
-		},
-		"CF1": {
-			MinimumQuantity:      3,
-			IsAppliedToBatches:   false,
-			BatchSize:            0,
-			IsPercentageDiscount: true,
-			DiscountPercentage:   float64(1) / float64(3),
-			DiscountInEuro:       0,
-		},
+func TestShoppingCart_Total(t *testing.T) {
+	greenTeaDiscountRule := domain.DiscountRule{
+		MinimumQuantity:      2,
+		IsAppliedToBatches:   true,
+		BatchSize:            2,
+		IsPercentageDiscount: true,
+		DiscountPercentage:   1,
+		DiscountInEuro:       0,
 	}
-	cart, err := domain.NewShoppingCart(discountRules)
-	assert.Nil(t, err)
+	strawberriesDiscountRule := domain.DiscountRule{
+		MinimumQuantity:      3,
+		IsAppliedToBatches:   false,
+		BatchSize:            0,
+		IsPercentageDiscount: false,
+		DiscountPercentage:   0,
+		DiscountInEuro:       0.50,
+	}
+	coffeeDiscountRule := domain.DiscountRule{
+		MinimumQuantity:      3,
+		IsAppliedToBatches:   false,
+		BatchSize:            0,
+		IsPercentageDiscount: true,
+		DiscountPercentage:   float64(1) / float64(3),
+		DiscountInEuro:       0,
+	}
 
-	err = cart.AddProduct(domain.Product{
-		Code:  "GR1",
-		Name:  "Green Tea",
-		Price: 3.11,
+	cart := domain.NewShoppingCart()
+
+	err := cart.AddProduct(domain.Product{
+		Code:         "GR1",
+		Name:         "Green Tea",
+		Price:        3.11,
+		DiscountRule: greenTeaDiscountRule,
 	}, 2)
 	assert.Nil(t, err)
 	total, err := cart.Total()
@@ -121,16 +106,18 @@ func TestShoppingCart_GetTotal(t *testing.T) {
 	cart.Reset() // TODO: test
 
 	err = cart.AddProduct(domain.Product{
-		Code:  "SR1",
-		Name:  "Strawberries",
-		Price: 5.00,
+		Code:         "SR1",
+		Name:         "Strawberries",
+		Price:        5.00,
+		DiscountRule: strawberriesDiscountRule,
 	}, 3)
 	assert.Nil(t, err)
 
 	err = cart.AddProduct(domain.Product{
-		Code:  "GR1",
-		Name:  "Green Tea",
-		Price: 3.11,
+		Code:         "GR1",
+		Name:         "Green Tea",
+		Price:        3.11,
+		DiscountRule: greenTeaDiscountRule,
 	}, 1)
 	assert.Nil(t, err)
 
@@ -141,23 +128,26 @@ func TestShoppingCart_GetTotal(t *testing.T) {
 	cart.Reset()
 
 	err = cart.AddProduct(domain.Product{
-		Code:  "GR1",
-		Name:  "Green Tea",
-		Price: 3.11,
+		Code:         "GR1",
+		Name:         "Green Tea",
+		Price:        3.11,
+		DiscountRule: greenTeaDiscountRule,
 	}, 1)
 	assert.Nil(t, err)
 
 	err = cart.AddProduct(domain.Product{
-		Code:  "CF1",
-		Name:  "Coffee",
-		Price: 11.23,
+		Code:         "CF1",
+		Name:         "Coffee",
+		Price:        11.23,
+		DiscountRule: coffeeDiscountRule,
 	}, 3)
 	assert.Nil(t, err)
 
 	err = cart.AddProduct(domain.Product{
-		Code:  "SR1",
-		Name:  "Strawberries",
-		Price: 5.00,
+		Code:         "SR1",
+		Name:         "Strawberries",
+		Price:        5.00,
+		DiscountRule: strawberriesDiscountRule,
 	}, 1)
 	assert.Nil(t, err)
 

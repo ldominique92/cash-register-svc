@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"cash-register-svc/internal/app"
-	"cash-register-svc/internal/domain"
 	"cash-register-svc/internal/infrastructure"
 	"errors"
 	"fmt"
@@ -13,8 +12,7 @@ import (
 )
 
 type AppConfig struct {
-	ProductsSourceFile string                                     `mapstructure:"products_source_file"`
-	DiscountRules      map[domain.ProductCode]domain.DiscountRule `mapstructure:"discount_rules"`
+	ProductsSourceFile string `mapstructure:"products_source_file"`
 }
 
 var RootCmd = &cobra.Command{
@@ -31,7 +29,7 @@ func init() {
 	productRepository := infrastructure.NewProductFileRepository(appConfig.ProductsSourceFile)
 	productCache := infrastructure.NewProductsInMemoryCache()
 
-	newCashRegisterApp, err := app.NewCashRegisterApp(productRepository, productCache, appConfig.DiscountRules)
+	newCashRegisterApp, err := app.NewCashRegisterApp(productRepository, productCache)
 	if err != nil {
 		log.Fatal(fmt.Errorf("newCashRegisterApp could not be initialized: %w", err))
 	}

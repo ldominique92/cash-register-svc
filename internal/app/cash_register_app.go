@@ -15,7 +15,6 @@ type CashRegisterApp struct {
 func NewCashRegisterApp(
 	productRepository domain.ProductRepository,
 	productCache domain.ProductCache,
-	applyDiscountRules map[domain.ProductCode]domain.DiscountRule,
 ) (CashRegisterApp, error) {
 	a := CashRegisterApp{
 		ProductRepository: productRepository,
@@ -32,11 +31,7 @@ func NewCashRegisterApp(
 		return CashRegisterApp{}, err
 	}
 
-	cart, err := domain.NewShoppingCart(applyDiscountRules)
-	if err != nil {
-		return CashRegisterApp{}, err
-	}
-	a.ShoppingCart = cart
+	a.ShoppingCart = domain.NewShoppingCart()
 
 	return a, nil
 }
@@ -63,7 +58,7 @@ func (a CashRegisterApp) getProductFromCache(productCode string) (domain.Product
 }
 
 func (a CashRegisterApp) GetTotal() (float64, error) {
-	return a.ShoppingCart.GetTotal()
+	return a.ShoppingCart.Total()
 }
 
 func (a CashRegisterApp) GetProducts() []domain.Product {

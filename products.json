@@ -1,17 +1,41 @@
 [
-    {
-      "code" : "GR1",
-      "name" : "Green Tea",
-      "price" : 3.11
-    },
-    {
-      "code" : "SR1",
-      "name" : "Strawberries",
-      "price" : 5.00
-    },
-    {
-      "code" : "CF1",
-      "name" : "Coffee",
-      "price" : 11.23
+  {
+    "code": "GR1",
+    "name": "Green Tea",
+    "price": 3.11,
+    "discount_rule": {
+      "minimum_quantity": 2,
+      "is_applied_to_batches": true,
+      "batch_size": 2,
+      "is_percentage_discount": true,
+      "discount_percentage": 0.5,
+      "discount_in_euro": 0
     }
+  },
+  {
+    "code": "SR1",
+    "name": "Strawberries",
+    "price": 5,
+    "discount_rule": {
+      "minimum_quantity": 3,
+      "is_applied_to_batches": false,
+      "batch_size": 0,
+      "is_percentage_discount": false,
+      "discount_percentage": 0,
+      "discount_in_euro": 0.5
+    }
+  },
+  {
+    "code": "CF1",
+    "name": "Coffee",
+    "price": 11.23,
+    "discount_rule": {
+      "minimum_quantity": 3,
+      "is_applied_to_batches": false,
+      "batch_size": 0,
+      "is_percentage_discount": true,
+      "discount_percentage": 0.33,
+      "discount_in_euro": 0
+    }
+  }
 ]

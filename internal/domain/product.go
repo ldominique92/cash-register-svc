@@ -3,9 +3,10 @@ package domain
 type ProductCode string
 
 type Product struct {
-	Code  ProductCode
-	Name  string
-	Price float64
+	Code         ProductCode  `json:"code"`
+	Name         string       `json:"name"`
+	Price        float64      `json:"price"`
+	DiscountRule DiscountRule `json:"discount_rule"`
 }
 
 type ProductRepository interface {
