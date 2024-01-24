@@ -6,12 +6,12 @@ import (
 )
 
 type DiscountRule struct {
-	MinimumQuantity      int
-	IsAppliedToBatches   bool
-	BatchSize            int
-	IsPercentageDiscount bool
-	DiscountPercentage   float64
-	DiscountInEuro       float64 // TODO: better to work with decimal
+	MinimumQuantity      int     `mapstructure:"minimum_quantity"`
+	IsAppliedToBatches   bool    `mapstructure:"is_applied_to_batches"`
+	BatchSize            int     `mapstructure:"batch_size"`
+	IsPercentageDiscount bool    `mapstructure:"is_percentage_discount"`
+	DiscountPercentage   float64 `mapstructure:"discount_percentage"`
+	DiscountInEuro       float64 `mapstructure:"discount_in_euro"` // TODO: better to work with decimal
 }
 
 func (d DiscountRule) TotalDiscount(quantity int, price float64) (float64, error) {

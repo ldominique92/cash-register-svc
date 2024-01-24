@@ -1,8 +1,29 @@
 {
-  "products_source_file": "products.json",
-  "discount_rules": {
-    "GR1": "BUY_ONE_GET_ONE_FREE_DISCOUNT_RULE",
-    "SR1": "CASH_BULK_DISCOUNT_RULE",
-    "CF1": "PERCENTAGE_BULK_DISCOUNT_RULE"
-  }
+    "products_source_file": "products.json",
+    "discount_rules": {
+        "GR1": {
+            "minimum_quantity": 2,
+            "is_applied_to_batches": true,
+            "batch_size": 2,
+            "is_percentage_discount": true,
+            "discount_percentage": 0.5,
+            "discount_in_euro": 0
+        },
+        "SR1": {
+            "minimum_quantity": 3,
+            "is_applied_to_batches": false,
+            "batch_size": 0,
+            "is_percentage_discount": false,
+            "discount_percentage": 0,
+            "discount_in_euro": 0.5
+        },
+        "CF1": {
+            "minimum_quantity": 3,
+            "is_applied_to_batches": false,
+            "batch_size": 0,
+            "is_percentage_discount": true,
+            "discount_percentage": 0.33,
+            "discount_in_euro": 0
+        }
+    }
 }

@@ -42,8 +42,8 @@ func loadAppConfig() (AppConfig, error) {
 	var appConfig AppConfig
 
 	viper.AddConfigPath(".")
-	viper.SetConfigName("app-config") // Register config file name (no extension)
-	viper.SetConfigType("json")       // Look for specific type
+	viper.SetConfigName("app-config")
+	viper.SetConfigType("json")
 	err := viper.ReadInConfig()
 	if err != nil {
 		return appConfig, err
