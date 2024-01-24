@@ -66,7 +66,7 @@ func listCart() {
 	fmt.Println("| Code | Name                 | Quantity | Price  |")
 
 	for _, i := range cashRegisterApp.ShoppingCart.Items { // TODO: create getter
-		fmt.Printf("| %-4s | %-20s | %2d | %5.2f€ |\n", i.Product.Code, i.Product.Name, i.Quantity, i.Product.Price)
+		fmt.Printf("| %-4s | %-20s | %-8d | %5.2f€ |\n", i.Product.Code, i.Product.Name, i.Quantity, i.Product.Price)
 	}
 
 }
