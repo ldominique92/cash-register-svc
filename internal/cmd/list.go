@@ -82,5 +82,4 @@ func listDiscounts() {
 	for p, r := range cashRegisterApp.ShoppingCart.DiscountRules {
 		fmt.Printf("| %-4s | %-40s |\n", p, r.Description())
 	}
-
 }

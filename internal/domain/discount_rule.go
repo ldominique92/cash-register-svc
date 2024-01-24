@@ -27,7 +27,7 @@ func (d DiscountRule) TotalDiscount(quantity int, price float64) (float64, error
 		return 0, errors.New("discount in euro is mandatory for value discount")
 	}
 
-	if quantity <= d.MinimumQuantity {
+	if quantity < d.MinimumQuantity {
 		return 0, nil
 	}
 
@@ -40,7 +40,7 @@ func (d DiscountRule) TotalDiscount(quantity int, price float64) (float64, error
 		return price * float64(numberOfItems) * d.DiscountPercentage, nil
 	}
 
-	return price * float64(numberOfItems) * d.DiscountInEuro, nil
+	return float64(numberOfItems) * d.DiscountInEuro, nil
 }
 
 func (d DiscountRule) Description() any {

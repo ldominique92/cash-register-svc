@@ -27,29 +27,29 @@ func (c ShoppingCart) AddProduct(product Product, quantity int) error {
 			item.Quantity += quantity
 			c.Items[product.Code] = item
 		} else {
-			c.Items[product.Code] = ShoppingCartItem{
+			item := ShoppingCartItem{
 				Product:  product,
 				Quantity: quantity,
 			}
+			if rule, ok := c.DiscountRules[product.Code]; ok {
+				item.DiscountRule = &rule
+			}
+			c.Items[product.Code] = item
 		}
 	}
 
 	return nil
 }
 
-func (c ShoppingCart) GetTotal() (float64, error) {
+func (c ShoppingCart) Total() (float64, error) {
 	total := float64(0)
 
-	for productCode, item := range c.Items {
-		if rule, ok := c.DiscountRules[productCode]; ok {
-			discount, err := rule.TotalDiscount(item.Quantity, item.Product.Price)
-			if err != nil {
-				return 0, err
-			}
-			total += (float64(item.Quantity) * item.Product.Price) - discount
-		} else {
-			total += float64(item.Quantity) * item.Product.Price
+	for _, item := range c.Items {
+		itemTotal, err := item.Total()
+		if err != nil {
+			return 0, err
 		}
+		total += itemTotal
 	}
 
 	return total, nil

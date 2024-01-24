@@ -85,7 +85,7 @@ func TestShoppingCart_GetTotal(t *testing.T) {
 			IsAppliedToBatches:   true,
 			BatchSize:            2,
 			IsPercentageDiscount: true,
-			DiscountPercentage:   0.50,
+			DiscountPercentage:   1,
 			DiscountInEuro:       0,
 		},
 		"SR1": {
@@ -114,7 +114,7 @@ func TestShoppingCart_GetTotal(t *testing.T) {
 		Price: 3.11,
 	}, 2)
 	assert.Nil(t, err)
-	total, err := cart.GetTotal()
+	total, err := cart.Total()
 	assert.Equal(t, total, 3.11)
 	assert.Nil(t, err)
 
@@ -134,7 +134,7 @@ func TestShoppingCart_GetTotal(t *testing.T) {
 	}, 1)
 	assert.Nil(t, err)
 
-	total, err = cart.GetTotal()
+	total, err = cart.Total()
 	assert.Equal(t, total, 16.61)
 	assert.Nil(t, err)
 
@@ -161,7 +161,7 @@ func TestShoppingCart_GetTotal(t *testing.T) {
 	}, 1)
 	assert.Nil(t, err)
 
-	total, err = cart.GetTotal()
+	total, err = cart.Total()
 	assert.Equal(t, total, 30.57)
 	assert.Nil(t, err)
 }

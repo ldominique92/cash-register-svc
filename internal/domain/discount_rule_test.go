@@ -13,7 +13,7 @@ func TestDiscountRule_TotalDiscount(t *testing.T) {
 		IsAppliedToBatches:   true,
 		BatchSize:            2,
 		IsPercentageDiscount: true,
-		DiscountPercentage:   0.50,
+		DiscountPercentage:   1,
 		DiscountInEuro:       0,
 	}
 
@@ -39,7 +39,7 @@ func TestDiscountRule_TotalDiscount(t *testing.T) {
 
 	discount, err = buyTreeStrawberriesOrMoreAndGet50CentsDiscount.TotalDiscount(5, 6.00)
 	assert.Nil(t, err)
-	assert.Equal(t, discount, float64(3))
+	assert.Equal(t, discount, 2.50)
 
 	buyTreeCoffeesOrMoreAndPayTwoThirds := domain.DiscountRule{
 		MinimumQuantity:      3,
@@ -56,5 +56,5 @@ func TestDiscountRule_TotalDiscount(t *testing.T) {
 
 	discount, err = buyTreeCoffeesOrMoreAndPayTwoThirds.TotalDiscount(5, 6.00)
 	assert.Nil(t, err)
-	assert.Equal(t, discount, float64(2))
+	assert.Equal(t, discount, float64(10))
 }
