@@ -73,7 +73,20 @@ func listCart() {
 			fmt.Println("error calculating item total")
 		}
 
-		fmt.Printf("| %-4s | %-20s | %-8d | %5.2f€ | %7.2f€ | %5.2f€ |\n", i.Product.Code, i.Product.Name, i.Quantity, i.Product.Price, discount, total)
+		fmt.Printf(
+			"| %-4s | %-20s | %-8d | %5.2f€ | %7.2f€ | %5.2f€ |\n",
+			i.Product.Code,
+			i.Product.Name,
+			i.Quantity,
+			i.Product.Price,
+			discount,
+			total,
+		)
 	}
 
+	total, err := cashRegisterApp.ShoppingCart.Total()
+	if err != nil {
+		fmt.Println("error calculating cart total")
+	}
+	fmt.Printf("| Total                                                        %5.2f€ |\n", total)
 }

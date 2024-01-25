@@ -15,7 +15,3 @@ var simplePrompt = &cobraprompt.CobraPrompt{
 func main() {
 	simplePrompt.Run()
 }
-
-// TODO: add could be better
-// add total to cart list
-// we don't need a getter for total in the app I guess
