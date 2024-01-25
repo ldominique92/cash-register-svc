@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
@@ -10,26 +11,31 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add products to your cart",
-	Long: `Use the flags for:
--p PRODUCT_NAME 
--q QUANTITY`,
+	Long:  `Usage: add PRODUCT_CODE QUANTITY`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cashRegisterApp == nil {
 			fmt.Println("not implemented")
 			return
 		}
 
-		productCode, _ := cmd.Flags().GetString("p")
-		quantity, _ := cmd.Flags().GetInt("q")
-
-		if len(productCode) == 0 {
+		if len(args) < 1 {
 			fmt.Println("product code is mandatory")
 			return
 		}
+		productCode := args[0]
 
-		if quantity <= 0 {
-			fmt.Println("product quantity should be bigger than 0")
-			return
+		quantity := 1
+		if len(args) >= 2 {
+			if q, err := strconv.Atoi(args[1]); err == nil {
+				quantity = q
+				if quantity <= 0 {
+					fmt.Println("product quantity should be bigger than 0")
+					return
+				}
+			} else {
+				fmt.Println("quantity should be an integer")
+				return
+			}
 		}
 
 		err := cashRegisterApp.AddProductToCart(productCode, quantity)
@@ -46,7 +52,4 @@ func init() {
 	}
 
 	RootCmd.AddCommand(addCmd)
-
-	addCmd.Flags().String("p", "", "Product code")
-	addCmd.Flags().Int("q", 0, "Product quantity")
 }
