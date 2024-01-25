@@ -31,16 +31,16 @@ var addCmd = &cobra.Command{
 	},
 }
 
-func getProductCodeAndQuantityFromArgs(args []string) (string, int, error) {
+func getProductCodeAndQuantityFromArgs(args []string) (string, int64, error) {
 	if len(args) < 1 {
 		return "", 0, errors.New("product code is mandatory")
 	}
 	productCode := args[0]
 
-	quantity := 1
+	quantity := int64(1)
 	if len(args) >= 2 {
 		if q, err := strconv.Atoi(args[1]); err == nil {
-			quantity = q
+			quantity = int64(q)
 			if quantity <= 0 {
 				return "", 0, errors.New("product quantity should be bigger than 0")
 			}

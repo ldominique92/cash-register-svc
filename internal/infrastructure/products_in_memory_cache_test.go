@@ -5,6 +5,7 @@ import (
 	"cash-register-svc/internal/infrastructure"
 	"testing"
 
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +13,7 @@ func TestProductsInMemoryCache(t *testing.T) {
 	product1 := domain.Product{
 		Code:  "PRD1",
 		Name:  "Coffee",
-		Price: 10,
+		Price: decimal.NewFromInt(10),
 	}
 
 	productsList := []domain.Product{product1}

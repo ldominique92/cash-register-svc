@@ -4,6 +4,7 @@ import (
 	"cash-register-svc/internal/domain"
 	"testing"
 
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,48 +14,48 @@ func TestDiscountRule_TotalDiscount(t *testing.T) {
 		IsAppliedToBatches:   true,
 		BatchSize:            2,
 		IsPercentageDiscount: true,
-		DiscountPercentage:   1,
-		DiscountInEuro:       0,
+		DiscountPercentage:   decimal.NewFromInt(1),
+		DiscountInEuro:       decimal.Zero,
 	}
 
-	discount, err := buyOneGetOneFreeDiscountRule.TotalDiscount(10, 25.5)
+	discount, err := buyOneGetOneFreeDiscountRule.TotalDiscount(10, decimal.NewFromFloat(25.5))
 	assert.Nil(t, err)
-	assert.Equal(t, discount, 127.5)
+	assert.Equal(t, discount, decimal.NewFromFloat(127.5))
 
-	discount, err = buyOneGetOneFreeDiscountRule.TotalDiscount(5, 8.30)
+	discount, err = buyOneGetOneFreeDiscountRule.TotalDiscount(5, decimal.NewFromFloat(8.30))
 	assert.Nil(t, err)
-	assert.Equal(t, discount, 16.6)
+	assert.Equal(t, discount, decimal.NewFromFloat(16.6))
 
 	buyTreeStrawberriesOrMoreAndGet50CentsDiscount := domain.DiscountRule{
 		MinimumQuantity:      3,
 		IsAppliedToBatches:   false,
 		BatchSize:            0,
 		IsPercentageDiscount: false,
-		DiscountPercentage:   0,
-		DiscountInEuro:       0.50,
+		DiscountPercentage:   decimal.Zero,
+		DiscountInEuro:       decimal.NewFromFloat(0.50),
 	}
-	discount, err = buyTreeStrawberriesOrMoreAndGet50CentsDiscount.TotalDiscount(2, 6.00)
+	discount, err = buyTreeStrawberriesOrMoreAndGet50CentsDiscount.TotalDiscount(2, decimal.NewFromInt(6.00))
 	assert.Nil(t, err)
-	assert.Equal(t, discount, float64(0))
+	assert.Equal(t, discount, decimal.Zero)
 
-	discount, err = buyTreeStrawberriesOrMoreAndGet50CentsDiscount.TotalDiscount(5, 6.00)
+	discount, err = buyTreeStrawberriesOrMoreAndGet50CentsDiscount.TotalDiscount(5, decimal.NewFromInt(6.00))
 	assert.Nil(t, err)
-	assert.Equal(t, discount, 2.50)
+	assert.Equal(t, discount, decimal.NewFromFloat(2.50))
 
 	buyTreeCoffeesOrMoreAndPayTwoThirds := domain.DiscountRule{
 		MinimumQuantity:      3,
 		IsAppliedToBatches:   false,
 		BatchSize:            0,
 		IsPercentageDiscount: true,
-		DiscountPercentage:   float64(1) / float64(3),
-		DiscountInEuro:       0,
+		DiscountPercentage:   decimal.NewFromInt(1).Div(decimal.NewFromInt(3)),
+		DiscountInEuro:       decimal.Zero,
 	}
 
-	discount, err = buyTreeCoffeesOrMoreAndPayTwoThirds.TotalDiscount(2, 6.00)
+	discount, err = buyTreeCoffeesOrMoreAndPayTwoThirds.TotalDiscount(2, decimal.NewFromInt(6))
 	assert.Nil(t, err)
-	assert.Equal(t, discount, float64(0))
+	assert.Equal(t, discount, decimal.Zero)
 
-	discount, err = buyTreeCoffeesOrMoreAndPayTwoThirds.TotalDiscount(5, 6.00)
+	discount, err = buyTreeCoffeesOrMoreAndPayTwoThirds.TotalDiscount(5, decimal.NewFromInt(6))
 	assert.Nil(t, err)
-	assert.Equal(t, discount, float64(10))
+	assert.Equal(t, discount.StringFixed(2), "10.00")
 }

@@ -1,12 +1,14 @@
 package domain
 
+import "github.com/shopspring/decimal"
+
 type ProductCode string
 
 type Product struct {
-	Code         ProductCode  `json:"code"`
-	Name         string       `json:"name"`
-	Price        float64      `json:"price"`
-	DiscountRule DiscountRule `json:"discount_rule"`
+	Code         ProductCode     `json:"code"`
+	Name         string          `json:"name"`
+	Price        decimal.Decimal `json:"price"`
+	DiscountRule DiscountRule    `json:"discount_rule"`
 }
 
 type ProductRepository interface {

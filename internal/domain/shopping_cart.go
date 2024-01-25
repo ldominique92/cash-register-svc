@@ -2,6 +2,8 @@ package domain
 
 import (
 	"errors"
+
+	"github.com/shopspring/decimal"
 )
 
 type ShoppingCart struct {
@@ -14,7 +16,7 @@ func NewShoppingCart() ShoppingCart {
 	}
 }
 
-func (c ShoppingCart) AddProduct(product Product, quantity int) error {
+func (c ShoppingCart) AddProduct(product Product, quantity int64) error {
 	if quantity != 0 {
 		if item, ok := c.Items[product.Code]; ok {
 			if quantity < 0 && item.Quantity < (-1*quantity) {
@@ -33,15 +35,15 @@ func (c ShoppingCart) AddProduct(product Product, quantity int) error {
 	return nil
 }
 
-func (c ShoppingCart) Total() (float64, error) {
-	total := float64(0)
+func (c ShoppingCart) Total() (decimal.Decimal, error) {
+	total := decimal.Zero
 
 	for _, item := range c.Items {
 		itemTotal, err := item.Total()
 		if err != nil {
-			return 0, err
+			return decimal.Zero, err
 		}
-		total += itemTotal
+		total = total.Add(itemTotal)
 	}
 
 	return total, nil

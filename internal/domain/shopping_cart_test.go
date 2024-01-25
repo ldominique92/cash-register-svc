@@ -4,6 +4,7 @@ import (
 	"cash-register-svc/internal/domain"
 	"testing"
 
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,13 +20,13 @@ func TestShoppingCart_AddProduct(t *testing.T) {
 	product1 := domain.Product{
 		Code:  "PRD1",
 		Name:  "Coffee",
-		Price: 10,
+		Price: decimal.NewFromInt(10),
 	}
 
 	product2 := domain.Product{
 		Code:  "PRD2",
 		Name:  "Coffee",
-		Price: 15,
+		Price: decimal.NewFromInt(15),
 	}
 
 	assert.Empty(t, cart.Items)
@@ -35,32 +36,32 @@ func TestShoppingCart_AddProduct(t *testing.T) {
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 1)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, 2)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(2))
 
 	err = cart.AddProduct(product1, 1)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 1)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
 
 	err = cart.AddProduct(product2, 5)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 2)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
 	assert.Equal(t, cart.Items["PRD2"].Product, product2)
-	assert.Equal(t, cart.Items["PRD2"].Quantity, 5)
+	assert.Equal(t, cart.Items["PRD2"].Quantity, int64(5))
 
 	err = cart.AddProduct(product2, -2)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, cart.Items)
 	assert.Equal(t, len(cart.Items), 2)
 	assert.Equal(t, cart.Items["PRD1"].Product, product1)
-	assert.Equal(t, cart.Items["PRD1"].Quantity, 3)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
 	assert.Equal(t, cart.Items["PRD2"].Product, product2)
-	assert.Equal(t, cart.Items["PRD2"].Quantity, 3)
+	assert.Equal(t, cart.Items["PRD2"].Quantity, int64(3))
 	// TODO: quantity can't be negative
 }
 
@@ -70,24 +71,24 @@ func TestShoppingCart_Total(t *testing.T) {
 		IsAppliedToBatches:   true,
 		BatchSize:            2,
 		IsPercentageDiscount: true,
-		DiscountPercentage:   1,
-		DiscountInEuro:       0,
+		DiscountPercentage:   decimal.NewFromInt(1),
+		DiscountInEuro:       decimal.Zero,
 	}
 	strawberriesDiscountRule := domain.DiscountRule{
 		MinimumQuantity:      3,
 		IsAppliedToBatches:   false,
 		BatchSize:            0,
 		IsPercentageDiscount: false,
-		DiscountPercentage:   0,
-		DiscountInEuro:       0.50,
+		DiscountPercentage:   decimal.Zero,
+		DiscountInEuro:       decimal.NewFromFloat(0.50),
 	}
 	coffeeDiscountRule := domain.DiscountRule{
 		MinimumQuantity:      3,
 		IsAppliedToBatches:   false,
 		BatchSize:            0,
 		IsPercentageDiscount: true,
-		DiscountPercentage:   float64(1) / float64(3),
-		DiscountInEuro:       0,
+		DiscountPercentage:   decimal.NewFromInt(1).Div(decimal.NewFromInt(3)),
+		DiscountInEuro:       decimal.Zero,
 	}
 
 	cart := domain.NewShoppingCart()
@@ -95,12 +96,12 @@ func TestShoppingCart_Total(t *testing.T) {
 	err := cart.AddProduct(domain.Product{
 		Code:         "GR1",
 		Name:         "Green Tea",
-		Price:        3.11,
+		Price:        decimal.NewFromFloat(3.11),
 		DiscountRule: greenTeaDiscountRule,
 	}, 2)
 	assert.Nil(t, err)
 	total, err := cart.Total()
-	assert.Equal(t, total, 3.11)
+	assert.Equal(t, total, decimal.NewFromFloat(3.11))
 	assert.Nil(t, err)
 
 	cart.Reset() // TODO: test
@@ -108,7 +109,7 @@ func TestShoppingCart_Total(t *testing.T) {
 	err = cart.AddProduct(domain.Product{
 		Code:         "SR1",
 		Name:         "Strawberries",
-		Price:        5.00,
+		Price:        decimal.NewFromInt(5),
 		DiscountRule: strawberriesDiscountRule,
 	}, 3)
 	assert.Nil(t, err)
@@ -116,13 +117,13 @@ func TestShoppingCart_Total(t *testing.T) {
 	err = cart.AddProduct(domain.Product{
 		Code:         "GR1",
 		Name:         "Green Tea",
-		Price:        3.11,
+		Price:        decimal.NewFromFloat(3.11),
 		DiscountRule: greenTeaDiscountRule,
 	}, 1)
 	assert.Nil(t, err)
 
 	total, err = cart.Total()
-	assert.Equal(t, total, 16.61)
+	assert.Equal(t, total, decimal.NewFromFloat(16.61))
 	assert.Nil(t, err)
 
 	cart.Reset()
@@ -130,7 +131,7 @@ func TestShoppingCart_Total(t *testing.T) {
 	err = cart.AddProduct(domain.Product{
 		Code:         "GR1",
 		Name:         "Green Tea",
-		Price:        3.11,
+		Price:        decimal.NewFromFloat(3.11),
 		DiscountRule: greenTeaDiscountRule,
 	}, 1)
 	assert.Nil(t, err)
@@ -138,7 +139,7 @@ func TestShoppingCart_Total(t *testing.T) {
 	err = cart.AddProduct(domain.Product{
 		Code:         "CF1",
 		Name:         "Coffee",
-		Price:        11.23,
+		Price:        decimal.NewFromFloat(11.23),
 		DiscountRule: coffeeDiscountRule,
 	}, 3)
 	assert.Nil(t, err)
@@ -146,12 +147,12 @@ func TestShoppingCart_Total(t *testing.T) {
 	err = cart.AddProduct(domain.Product{
 		Code:         "SR1",
 		Name:         "Strawberries",
-		Price:        5.00,
+		Price:        decimal.NewFromInt(5),
 		DiscountRule: strawberriesDiscountRule,
 	}, 1)
 	assert.Nil(t, err)
 
 	total, err = cart.Total()
-	assert.Equal(t, total, 30.57)
+	assert.Equal(t, total.StringFixed(2), "30.57")
 	assert.Nil(t, err)
 }

@@ -3,32 +3,34 @@ package domain
 import (
 	"errors"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 )
 
 type DiscountRule struct {
-	MinimumQuantity      int     `json:"minimum_quantity"`
-	IsAppliedToBatches   bool    `json:"is_applied_to_batches"`
-	BatchSize            int     `json:"batch_size"`
-	IsPercentageDiscount bool    `json:"is_percentage_discount"`
-	DiscountPercentage   float64 `json:"discount_percentage"`
-	DiscountInEuro       float64 `json:"discount_in_euro"` // TODO: better to work with decimal
+	MinimumQuantity      int64           `json:"minimum_quantity"`
+	IsAppliedToBatches   bool            `json:"is_applied_to_batches"`
+	BatchSize            int64           `json:"batch_size"`
+	IsPercentageDiscount bool            `json:"is_percentage_discount"`
+	DiscountPercentage   decimal.Decimal `json:"discount_percentage"`
+	DiscountInEuro       decimal.Decimal `json:"discount_in_euro"`
 }
 
-func (d DiscountRule) TotalDiscount(quantity int, price float64) (float64, error) {
+func (d DiscountRule) TotalDiscount(quantity int64, price decimal.Decimal) (decimal.Decimal, error) {
 	if d.IsAppliedToBatches && d.BatchSize <= 0 {
-		return 0, errors.New("batch size is mandatory for discount rules applied in batches")
+		return decimal.Zero, errors.New("batch size is mandatory for discount rules applied in batches")
 	}
 
-	if d.IsPercentageDiscount && d.DiscountPercentage == 0 {
-		return 0, errors.New("discount percentage is mandatory for percentage discount")
+	if d.IsPercentageDiscount && d.DiscountPercentage == decimal.Zero {
+		return decimal.Zero, errors.New("discount percentage is mandatory for percentage discount")
 	}
 
-	if !d.IsPercentageDiscount && d.DiscountInEuro == 0 {
-		return 0, errors.New("discount in euro is mandatory for value discount")
+	if !d.IsPercentageDiscount && d.DiscountInEuro == decimal.Zero {
+		return decimal.Zero, errors.New("discount in euro is mandatory for value discount")
 	}
 
 	if quantity < d.MinimumQuantity {
-		return 0, nil
+		return decimal.Zero, nil
 	}
 
 	numberOfItems := quantity
@@ -37,10 +39,10 @@ func (d DiscountRule) TotalDiscount(quantity int, price float64) (float64, error
 	}
 
 	if d.IsPercentageDiscount {
-		return price * float64(numberOfItems) * d.DiscountPercentage, nil
+		return price.Mul(decimal.NewFromInt(numberOfItems).Mul(d.DiscountPercentage)), nil
 	}
 
-	return float64(numberOfItems) * d.DiscountInEuro, nil
+	return decimal.NewFromInt(numberOfItems).Mul(d.DiscountInEuro), nil
 }
 
 func (d DiscountRule) Description() any {
@@ -51,12 +53,16 @@ func (d DiscountRule) Description() any {
 	}
 	if d.IsAppliedToBatches {
 		desc = fmt.Sprintf(
-			"%s, for every %d products apply %.2f percent discount",
+			"%s, for every %d products apply %v percent discount",
 			desc,
 			d.BatchSize,
-			d.DiscountPercentage)
+			d.DiscountPercentage.StringFixed(2))
 	} else {
-		desc = fmt.Sprintf("%s, for every %d products apply €%.2f discount", desc, d.BatchSize, d.DiscountInEuro)
+		desc = fmt.Sprintf(
+			"%s, for every %d products apply €%v discount",
+			desc,
+			d.BatchSize,
+			d.DiscountInEuro.StringFixed(2))
 	}
 
 	return desc

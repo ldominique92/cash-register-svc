@@ -49,7 +49,7 @@ func listProducts() {
 	fmt.Println("| Code | Name                 | Price  | Discount                                                                 |")
 
 	for _, p := range products {
-		fmt.Printf("| %-4s | %-20s | %5.2f€ | %-72s |\n", p.Code, p.Name, p.Price, p.DiscountRule.Description())
+		fmt.Printf("| %-4s | %-20s | %5s€ | %-72s |\n", p.Code, p.Name, p.Price.StringFixed(2), p.DiscountRule.Description())
 	}
 
 }
@@ -74,13 +74,13 @@ func listCart() {
 		}
 
 		fmt.Printf(
-			"| %-4s | %-20s | %-8d | %5.2f€ | %7.2f€ | %5.2f€ |\n",
+			"| %-4s | %-20s | %-8d | %5s€ | %7s€ | %5s€ |\n",
 			i.Product.Code,
 			i.Product.Name,
 			i.Quantity,
-			i.Product.Price,
-			discount,
-			total,
+			i.Product.Price.StringFixed(2),
+			discount.StringFixed(2),
+			total.StringFixed(2),
 		)
 	}
 
@@ -88,5 +88,5 @@ func listCart() {
 	if err != nil {
 		fmt.Println("error calculating cart total")
 	}
-	fmt.Printf("| Total                                                        %5.2f€ |\n", total)
+	fmt.Printf("| Total                                                        %v€ |\n", total.StringFixed(2))
 }
