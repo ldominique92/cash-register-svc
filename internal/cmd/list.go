@@ -59,11 +59,21 @@ func listCart() {
 		fmt.Println("not implemented")
 	}
 
-	fmt.Println("|                     Cart                        |")
-	fmt.Println("| Code | Name                 | Quantity | Price  |")
+	fmt.Println("| Cart                                                                |")
+	fmt.Println("| Code | Name                 | Quantity | Price  | Discount | Total  | ")
 
-	for _, i := range cashRegisterApp.ShoppingCart.Items { // TODO: create getter
-		fmt.Printf("| %-4s | %-20s | %-8d | %5.2f€ |\n", i.Product.Code, i.Product.Name, i.Quantity, i.Product.Price)
+	for _, i := range cashRegisterApp.ShoppingCart.Items {
+		discount, err := i.TotalDiscount()
+		if err != nil {
+			fmt.Println("error calculating item total")
+		}
+
+		total, err := i.Total()
+		if err != nil {
+			fmt.Println("error calculating item total")
+		}
+
+		fmt.Printf("| %-4s | %-20s | %-8d | %5.2f€ | %7.2f€ | %5.2f€ |\n", i.Product.Code, i.Product.Name, i.Quantity, i.Product.Price, discount, total)
 	}
 
 }
