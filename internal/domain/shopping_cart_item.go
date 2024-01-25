@@ -7,7 +7,6 @@ type ShoppingCartItem struct {
 	Quantity int64
 }
 
-// TODO: test this
 func (i ShoppingCartItem) Total() (decimal.Decimal, error) {
 	discount, err := i.TotalDiscount()
 	if err != nil {

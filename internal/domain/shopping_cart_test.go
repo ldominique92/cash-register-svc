@@ -62,7 +62,16 @@ func TestShoppingCart_AddProduct(t *testing.T) {
 	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
 	assert.Equal(t, cart.Items["PRD2"].Product, product2)
 	assert.Equal(t, cart.Items["PRD2"].Quantity, int64(3))
-	// TODO: quantity can't be negative
+
+	err = cart.AddProduct(product2, -10)
+	assert.NotNil(t, err)
+
+	err = cart.AddProduct(product2, -3)
+	assert.Nil(t, err)
+	assert.NotEmpty(t, cart.Items)
+	assert.Equal(t, len(cart.Items), 1)
+	assert.Equal(t, cart.Items["PRD1"].Product, product1)
+	assert.Equal(t, cart.Items["PRD1"].Quantity, int64(3))
 }
 
 func TestShoppingCart_Total(t *testing.T) {
@@ -104,7 +113,7 @@ func TestShoppingCart_Total(t *testing.T) {
 	assert.Equal(t, total, decimal.NewFromFloat(3.11))
 	assert.Nil(t, err)
 
-	cart.Reset() // TODO: test
+	cart.Reset()
 
 	err = cart.AddProduct(domain.Product{
 		Code:         "SR1",

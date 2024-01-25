@@ -17,18 +17,27 @@ func NewShoppingCart() ShoppingCart {
 }
 
 func (c ShoppingCart) AddProduct(product Product, quantity int64) error {
-	if quantity != 0 {
-		if item, ok := c.Items[product.Code]; ok {
-			if quantity < 0 && item.Quantity < (-1*quantity) {
-				return errors.New("invalid quantity")
-			}
-			item.Quantity += quantity
-			c.Items[product.Code] = item
-		} else {
-			c.Items[product.Code] = ShoppingCartItem{
-				Product:  product,
-				Quantity: quantity,
-			}
+	if quantity == 0 {
+		return nil
+	}
+
+	if item, ok := c.Items[product.Code]; ok {
+		newQuantity := item.Quantity + quantity
+		if newQuantity < 0 {
+			return errors.New("invalid quantity")
+		}
+
+		if newQuantity == 0 {
+			delete(c.Items, product.Code)
+			return nil
+		}
+
+		item.Quantity = newQuantity
+		c.Items[product.Code] = item
+	} else {
+		c.Items[product.Code] = ShoppingCartItem{
+			Product:  product,
+			Quantity: quantity,
 		}
 	}
 
