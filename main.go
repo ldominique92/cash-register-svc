@@ -18,5 +18,4 @@ func main() {
 
 // TODO: add could be better
 // add total to cart list
-// implement remove
 // we don't need a getter for total in the app I guess

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -18,31 +19,36 @@ var addCmd = &cobra.Command{
 			return
 		}
 
-		if len(args) < 1 {
-			fmt.Println("product code is mandatory")
-			return
-		}
-		productCode := args[0]
-
-		quantity := 1
-		if len(args) >= 2 {
-			if q, err := strconv.Atoi(args[1]); err == nil {
-				quantity = q
-				if quantity <= 0 {
-					fmt.Println("product quantity should be bigger than 0")
-					return
-				}
-			} else {
-				fmt.Println("quantity should be an integer")
-				return
-			}
+		productCode, quantity, err := getProductCodeAndQuantityFromArgs(args)
+		if err != nil {
+			fmt.Println(err)
 		}
 
-		err := cashRegisterApp.AddProductToCart(productCode, quantity)
+		err = cashRegisterApp.AddProductToCart(productCode, quantity)
 		if err != nil {
 			fmt.Println(err)
 		}
 	},
+}
+
+func getProductCodeAndQuantityFromArgs(args []string) (string, int, error) {
+	if len(args) < 1 {
+		return "", 0, errors.New("product code is mandatory")
+	}
+	productCode := args[0]
+
+	quantity := 1
+	if len(args) >= 2 {
+		if q, err := strconv.Atoi(args[1]); err == nil {
+			quantity = q
+			if quantity <= 0 {
+				return "", 0, errors.New("product quantity should be bigger than 0")
+			}
+		} else {
+			return "", 0, errors.New("quantity should be an integer")
+		}
+	}
+	return productCode, quantity, nil
 }
 
 func init() {

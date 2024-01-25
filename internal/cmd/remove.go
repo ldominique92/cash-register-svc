@@ -10,11 +10,22 @@ import (
 var removeCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove products to your cart",
-	Long: `Use the flags for:
--p PRODUCT_NAME 
--q QUANTITY`,
+	Long:  `Usage: remove PRODUCT_CODE QUANTITY`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
+		if cashRegisterApp == nil {
+			fmt.Println("not implemented")
+			return
+		}
+
+		productCode, quantity, err := getProductCodeAndQuantityFromArgs(args)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		err = cashRegisterApp.AddProductToCart(productCode, -quantity)
+		if err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 
@@ -24,14 +35,4 @@ func init() {
 	}
 
 	RootCmd.AddCommand(removeCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// removeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// removeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
