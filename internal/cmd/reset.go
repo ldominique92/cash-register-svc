@@ -12,7 +12,12 @@ var resetCmd = &cobra.Command{
 	Short: "Reset shopping cart",
 	Long:  `Reset shopping cart`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("reset called")
+		if cashRegisterApp == nil {
+			fmt.Println("not implemented")
+			return
+		}
+
+		cashRegisterApp.ResetShoppingCart()
 	},
 }
 

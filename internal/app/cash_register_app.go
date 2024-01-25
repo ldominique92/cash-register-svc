@@ -64,3 +64,7 @@ func (a CashRegisterApp) GetTotal() (float64, error) {
 func (a CashRegisterApp) GetProducts() []domain.Product {
 	return a.ProductCache.ListProducts()
 }
+
+func (a CashRegisterApp) ResetShoppingCart() {
+	a.ShoppingCart.Reset()
+}
